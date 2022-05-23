@@ -47,3 +47,12 @@ export const Icon = styled(Feather)`
     color:${({theme})=>theme.colors.secondary};
     font-size:${RFValue(24)}px;
 `as unknown as typeof Feather;
+
+export const HighlightCards=styled.ScrollView.attrs({
+    horizontal:true,
+    showsHorizontalScrollIndicator:false,
+    contentContainerStyle:{paddingHorizontal:24}
+})`
+
+
+`

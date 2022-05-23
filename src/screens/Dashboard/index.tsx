@@ -10,7 +10,8 @@ import {
     UserGreeding,
     UserName,
     UserWrapper,
-    Icon
+    Icon,
+    HighlightCards
 } from "./styles";
 export function Dashboard() {
     return (
@@ -24,12 +25,19 @@ export function Dashboard() {
                             <UserName>Mikael</UserName>
                         </User>
                     </UserInfo>
-                    <Icon name="power"/>
+                    <Icon name="power" />
                 </UserWrapper>
-               
-            </Header>
 
-            <HighlightCard/>
+            </Header>
+            <HighlightCards
+          
+            >
+                <HighlightCard />
+                <HighlightCard />
+                <HighlightCard />
+                <HighlightCard />
+                <HighlightCard />
+            </HighlightCards>
         </Container>
     )
 }
