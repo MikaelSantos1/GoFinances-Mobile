@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 
 import { HighlightCard } from "../../components/HighlightCard";
-import { TransactionCard ,TransactionCardProps} from "../../components/TransactionCard";
-
+import { TransactionCard, TransactionCardProps } from "../../components/TransactionCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     Container,
     Header,
@@ -21,58 +21,52 @@ import {
     LoggoutButton
 } from "./styles";
 
-export interface DataListProps extends TransactionCardProps{
-    id:string;
+export interface DataListProps extends TransactionCardProps {
+    id: string;
 }
 
 export function Dashboard() {
-    const data:DataListProps[] = [
-        {
-            id: '1',
-            type: 'positive',
-            title: "Desenvolvimento de app",
-            amount: "R$6.000,00",
-            category: {
-                name: 'Vendas',
-                icon: 'dollar-sign',
-            },
-            date: "23/05/22"
-        },
-        {
-            id: '2',
-            type: 'negative',
-            title: "Hamburguer",
-            amount: "R$50,00",
-            category: {
-                name: 'Alimentação',
-                icon: 'coffee',
-            },
-            date: "23/05/22"
-        },
-        {
-            id: '3',
-            type: 'positive',
-            title: "Desenvolvimento de app",
-            amount: "R$6.000,00",
-            category: {
-                name: 'Vendas',
-                icon: 'dollar-sign',
-            },
-            date: "23/05/22"
-        },
-        {
-            id: '4',
-            type: 'negative',
-            title: "Aluguel",
-            amount: "R$1.200,00",
-            category: {
-                name: 'Casa',
-                icon: 'shopping-bag',
-            },
-            date: "23/05/22"
-        }
-    ]
+    const [data, setData] = useState<DataListProps[]>([])
 
+    async function loadTransaction() {
+        const dataKey = '@GoFinance:transactions'
+        const response = await AsyncStorage.getItem(dataKey)
+        const transactions = response ? JSON.parse(response) : [];
+      
+        const transactionsFormatted: DataListProps[] = transactions
+        .map((item: DataListProps) => {
+            const amount = Number(item.amount)
+                .toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                })
+
+            const date = Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: '2-digit'
+            }).format(new Date(item.date))
+
+            return {
+                id: item.id,
+                name: item.name,
+                amount,
+                type: item.type,
+                category: item.category,
+                date
+            }
+            
+        })
+       console.log(transactionsFormatted)
+        setData(transactionsFormatted)
+    }
+
+    useEffect(() => {
+        loadTransaction()
+        // const dataKey = '@GoFinance:transactions'
+        // AsyncStorage.removeItem(dataKey)
+    }, [])
+    console.log(data)
     return (
         <Container>
             <Header>
@@ -84,10 +78,10 @@ export function Dashboard() {
                             <UserName>Mikael</UserName>
                         </User>
                     </UserInfo>
-                    <LoggoutButton onPress={()=>{}}>
-                    <Icon name="power" />
+                    <LoggoutButton onPress={() => { }}>
+                        <Icon name="power" />
                     </LoggoutButton>
-                    
+
                 </UserWrapper>
 
             </Header>
