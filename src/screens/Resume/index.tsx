@@ -67,7 +67,7 @@ export function Resume() {
             new Date(expensive.date).getMonth()===selectDate.getMonth() &&
             new Date(expensive.date).getFullYear()===selectDate.getFullYear()    
             )
-        console.log(expensives)
+    
         const expensiveTotal= expensives
         .reduce((accumulator:number,expensive:TransactionData)=>{
             return accumulator + Number(expensive.amount)

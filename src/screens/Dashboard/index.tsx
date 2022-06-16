@@ -106,8 +106,7 @@ export function Dashboard() {
         const lastTransactionsEntries = getLastTransactionsData(transactions,'positive')
         const lastTransactionsExpensives = getLastTransactionsData(transactions,'negative')
         const totalInterval= `1 a ${lastTransactionsExpensives}`
-        console.log(lastTransactionsEntries)
-        console.log(lastTransactionsExpensives)
+       
 
         const total = entriesTotal - expensiveTotal
 
