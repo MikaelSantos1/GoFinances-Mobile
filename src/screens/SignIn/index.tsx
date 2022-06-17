@@ -15,15 +15,24 @@ import LogoSvg from '../../assets/logo.svg'
 import { RFValue } from "react-native-responsive-fontsize";
 import { SignInSocialButton } from "../../components/SignInSocialButton";
 import { useAuth } from "../../hooks/auth";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 
 
 export function SignIn() {
-   const {signInWithGoogle} = useAuth()
+   const {signInWithGoogle, signInWithApple} = useAuth()
 
    async function handleSignInWithGoogle(){
     try{
-        await signInWithGoogle()
+       return await signInWithGoogle()
+    }catch(err){
+        console.log(err.message)
+        Alert.alert('Não foi possivel conectar a conta google')
+    }
+   }
+
+   async function handleSignInWithApple(){
+    try{
+        await signInWithApple()
     }catch(err){
         console.log(err.message)
         Alert.alert('Não foi possivel conectar a conta google')
@@ -52,16 +61,21 @@ export function SignIn() {
             </Header>
             <Footer>
                 <FooterWrapper>
-                    <SignInSocialButton
-                        title="Entrar com Google"
-                        svg={GoogleSvg}
-                        onPress={handleSignInWithGoogle}
-                    />
-
-                    <SignInSocialButton
+                    {
+                        Platform.OS==='ios'? <SignInSocialButton
                         title="Entrar com Apple"
                         svg={AppleSvg}
-                    />
+                        onPress={handleSignInWithApple}
+                    />:
+                    <SignInSocialButton
+                    title="Entrar com Google"
+                    svg={GoogleSvg}
+                    onPress={handleSignInWithGoogle}
+                />
+                    }
+                   
+
+                   
                 </FooterWrapper>
             </Footer>
         </Container>

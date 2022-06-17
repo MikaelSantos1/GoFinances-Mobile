@@ -29,6 +29,7 @@ import {
     Fields,
     TransactionTypes
 } from "./styles";
+import { useAuth } from "../../hooks/auth";
 
 interface FormData {
     [name: string]: string;
@@ -53,7 +54,7 @@ export function Register() {
     })
 
     const { navigate }: NavigationProp<ParamListBase> = useNavigation();
-    
+    const {user}=useAuth()
     
 
     const {
@@ -91,7 +92,7 @@ export function Register() {
             date: new Date()
         }
         try{
-            const dataKey='@GoFinance:transactions'
+            const dataKey=`@GoFinance:transactions_user:${user.id}`
             const data = await AsyncStorage.getItem(dataKey)
             const currentData =  data? JSON.parse(data) : []
             

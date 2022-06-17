@@ -22,6 +22,7 @@ import {
     LoggoutButton,
     LoadContainer
 } from "./styles";
+import { useAuth } from "../../hooks/auth";
 
 export interface DataListProps extends TransactionCardProps {
     id: string;
@@ -44,33 +45,33 @@ export function Dashboard() {
     const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData)
 
     const theme = useTheme()
+    const {signOut,user} = useAuth()
 
-    function getLastTransactionsData(
-        collection:DataListProps[],
+    function getLastTransactionDate(
+        collection: DataListProps[],
         type: 'positive' | 'negative'
-        ){
-        const lastTransactions = Math.max.apply(Math, collection
-            .filter((transaction) => transaction.type === type)
-            .map((transaction) => new Date(transaction.date).getTime()))
-
-        return Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-           
-        }).format(new Date(lastTransactions))
-    }
+      ){
+        const collectionFilttered =collection.filter(transaction => transaction.type === type)
+        if(collectionFilttered.length===0) return 0
+        const lastTransaction = new Date(
+        Math.max.apply(Math, 
+        collectionFilttered
+        .map(transaction => new Date(transaction.date).getTime())))
+    
+        return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', { month: 'long' })}`;
+      }
 
 
 
 
     async function loadTransaction() {
-        const dataKey = '@GoFinance:transactions'
+        const dataKey = `@GoFinance:transactions_user:${user.id}`
         const response = await AsyncStorage.getItem(dataKey)
         const transactions = response ? JSON.parse(response) : [];
 
         let entriesTotal = 0
         let expensiveTotal = 0
-
+        
         const transactionsFormatted: DataListProps[] = transactions.map((item: DataListProps) => {
             if (item.type === 'positive') {
                 entriesTotal += Number(item.amount)
@@ -100,13 +101,13 @@ export function Dashboard() {
             }
 
         })
-
+       
         setTrasanctions(transactionsFormatted)
 
-        const lastTransactionsEntries = getLastTransactionsData(transactions,'positive')
-        const lastTransactionsExpensives = getLastTransactionsData(transactions,'negative')
+        const lastTransactionsEntries = getLastTransactionDate(transactions,'positive')
+        const lastTransactionsExpensives = getLastTransactionDate(transactions,'negative')
         const totalInterval= `1 a ${lastTransactionsExpensives}`
-       
+       console.log(lastTransactionsEntries)
 
         const total = entriesTotal - expensiveTotal
 
@@ -117,14 +118,14 @@ export function Dashboard() {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction:`Última entrada dia ${lastTransactionsEntries}`
+                lastTransaction:lastTransactionsEntries===0?'': `Última entrada dia ${lastTransactionsEntries}`
             },
             expensives: {
                 amount: expensiveTotal.toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction:`Última entrada dia ${lastTransactionsExpensives}`
+                lastTransaction:lastTransactionsExpensives===0?'':  `Última saida dia ${lastTransactionsExpensives}`
             },
             total: {
                 amount: total.toLocaleString('pt-BR', {
@@ -138,12 +139,12 @@ export function Dashboard() {
     }
 
     useEffect(() => {
-        loadTransaction()
+         loadTransaction()
         // const dataKey = '@GoFinance:transactions'
         // AsyncStorage.removeItem(dataKey)
     }, [])
     useFocusEffect(useCallback(() => {
-        loadTransaction()
+         loadTransaction()
     }, []))
     return (
         <Container>
@@ -159,13 +160,13 @@ export function Dashboard() {
                         <Header>
                             <UserWrapper>
                                 <UserInfo>
-                                    <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/90217183?v=4' }} />
+                                    <Photo source={{ uri: user.photo }} />
                                     <User>
                                         <UserGreeding>Olá,</UserGreeding>
-                                        <UserName>Mikael</UserName>
+                                        <UserName>{user.name}</UserName>
                                     </User>
                                 </UserInfo>
-                                <LoggoutButton onPress={() => { }}>
+                                <LoggoutButton onPress={signOut}>
                                     <Icon name="power" />
                                 </LoggoutButton>
 
