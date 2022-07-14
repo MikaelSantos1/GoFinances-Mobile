@@ -2,13 +2,13 @@
 
 
 ##🚀 Tecnologias
-Expo
-Styled-components
-Typescript
-Async storage
-React Navigation
-React hook form e yup
-OAuth
+* Expo
+* Styled-components
+* Typescript
+* Async storage
+* React Navigation
+* React hook form e yup
+* OAuth
 
 
 <img src="./images/cadastro.PNG" alt="">
